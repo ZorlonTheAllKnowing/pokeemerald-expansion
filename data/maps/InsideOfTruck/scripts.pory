@@ -58,3 +58,8 @@ InsideOfTruck_Text_BoxPrintedWithMonLogo:
 	.string "delivery service.$"
 
 `
+script InsodeOfTruck_Text_GarbageSign {
+	lockall
+	msgbox("Hey stupid")
+	releaseall
+}

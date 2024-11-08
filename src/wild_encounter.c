@@ -23,6 +23,7 @@
 #include "constants/items.h"
 #include "constants/layouts.h"
 #include "constants/weather.h"
+#include "field_weather.h"
 
 extern const u8 EventScript_SprayWoreOff[];
 
@@ -214,8 +215,41 @@ static u8 ChooseWildMonIndex_Land(void)
         wildMonIndex = 9;
     else if (rand >= ENCOUNTER_CHANCE_LAND_MONS_SLOT_9 && rand < ENCOUNTER_CHANCE_LAND_MONS_SLOT_10)
         wildMonIndex = 10;
-    else
+    else if (rand >= ENCOUNTER_CHANCE_LAND_MONS_SLOT_10 && rand < ENCOUNTER_CHANCE_LAND_MONS_SLOT_11)
         wildMonIndex = 11;
+    else if (rand >= ENCOUNTER_CHANCE_LAND_MONS_SLOT_11 && rand < ENCOUNTER_CHANCE_LAND_MONS_SLOT_12)
+        wildMonIndex = 12;
+    else if (rand >= ENCOUNTER_CHANCE_LAND_MONS_SLOT_12 && rand < ENCOUNTER_CHANCE_LAND_MONS_SLOT_13)
+        wildMonIndex = 13;
+    else if (rand >= ENCOUNTER_CHANCE_LAND_MONS_SLOT_13 && rand < ENCOUNTER_CHANCE_LAND_MONS_SLOT_14)
+        wildMonIndex = 14;
+    else if (rand >= ENCOUNTER_CHANCE_LAND_MONS_SLOT_14 && rand < ENCOUNTER_CHANCE_LAND_MONS_SLOT_15)
+        wildMonIndex = 15;
+    else if (rand >= ENCOUNTER_CHANCE_LAND_MONS_SLOT_15 && rand < ENCOUNTER_CHANCE_LAND_MONS_SLOT_16)
+        wildMonIndex = 16;
+    else if (rand >= ENCOUNTER_CHANCE_LAND_MONS_SLOT_16 && rand < ENCOUNTER_CHANCE_LAND_MONS_SLOT_17)
+        wildMonIndex = 17;
+    else if (rand >= ENCOUNTER_CHANCE_LAND_MONS_SLOT_17 && rand < ENCOUNTER_CHANCE_LAND_MONS_SLOT_18)
+        wildMonIndex = 18;
+    else if (rand >= ENCOUNTER_CHANCE_LAND_MONS_SLOT_18 && rand < ENCOUNTER_CHANCE_LAND_MONS_SLOT_19)
+        wildMonIndex = 19;
+    else if (rand >= ENCOUNTER_CHANCE_LAND_MONS_SLOT_19 && rand < ENCOUNTER_CHANCE_LAND_MONS_SLOT_20)
+        wildMonIndex = 20;
+    else if (rand >= ENCOUNTER_CHANCE_LAND_MONS_SLOT_20 && rand < ENCOUNTER_CHANCE_LAND_MONS_SLOT_21)
+        wildMonIndex = 21;
+    else if (rand >= ENCOUNTER_CHANCE_LAND_MONS_SLOT_21 && rand < ENCOUNTER_CHANCE_LAND_MONS_SLOT_22)
+        wildMonIndex = 22;
+    else if (rand >= ENCOUNTER_CHANCE_LAND_MONS_SLOT_22 && rand < ENCOUNTER_CHANCE_LAND_MONS_SLOT_23)
+        wildMonIndex = 23;
+    else if (rand >= ENCOUNTER_CHANCE_LAND_MONS_SLOT_23 && rand < ENCOUNTER_CHANCE_LAND_MONS_SLOT_24)
+        wildMonIndex = 24;
+    else if (rand >= ENCOUNTER_CHANCE_LAND_MONS_SLOT_24 && rand < ENCOUNTER_CHANCE_LAND_MONS_SLOT_25)
+        wildMonIndex = 25;
+    else if (rand >= ENCOUNTER_CHANCE_LAND_MONS_SLOT_25 && rand < ENCOUNTER_CHANCE_LAND_MONS_SLOT_26)
+        wildMonIndex = 26;
+    else 
+        wildMonIndex = 27;
+    
 
     if (LURE_STEP_COUNT != 0 && (Random() % 10 < 2))
         swap = TRUE;
@@ -312,6 +346,11 @@ static u8 ChooseWildMonLevel(const struct WildPokemon *wildPokemon, u8 wildMonIn
     u8 range;
     u8 rand;
 
+    //Always make wild pokemon level 100
+
+    return 100;
+
+    //the following is the old code
     if (LURE_STEP_COUNT == 0)
     {
         // Make sure minimum level is less than maximum level
@@ -367,16 +406,21 @@ static u16 GetCurrentMapWildMonHeaderId(void)
         if (gWildMonHeaders[i].mapGroup == gSaveBlock1Ptr->location.mapGroup &&
             gWildMonHeaders[i].mapNum == gSaveBlock1Ptr->location.mapNum)
         {
-            if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(ALTERING_CAVE) &&
-                gSaveBlock1Ptr->location.mapNum == MAP_NUM(ALTERING_CAVE))
-            {
-                u16 alteringCaveId = VarGet(VAR_ALTERING_CAVE_WILD_SET);
-                if (alteringCaveId >= NUM_ALTERING_CAVE_TABLES)
-                    alteringCaveId = 0;
+            // if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(ALTERING_CAVE) &&
+            //     gSaveBlock1Ptr->location.mapNum == MAP_NUM(ALTERING_CAVE))
+            // {
+            //     u16 alteringCaveId = VarGet(VAR_ALTERING_CAVE_WILD_SET);
+            //     if (alteringCaveId >= NUM_ALTERING_CAVE_TABLES)
+            //         alteringCaveId = 0;
 
-                i += alteringCaveId;
+            //     i += alteringCaveId;
+            // }
+            if (GetCurrentWeather() == WEATHER_SUNNY ){
+                return i;
             }
-
+            else if (GetCurrentWeather() == WEATHER_RAIN ){
+                return i+1;
+            }
             return i;
         }
     }
