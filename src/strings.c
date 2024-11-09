@@ -1834,3 +1834,7 @@ const u8 gText_Fertilize[] = _("FERTILIZE");
 const u8 gText_PlantBerry[] = _("PLANT BERRY");
 const u8 gText_AM[] = _("AM");
 const u8 gText_PM[] = _("PM");
+
+//Added by Zorlon
+//String for Party Menu's Evolve option
+const u8 gText_Evolve[] = _("EVOLVE");

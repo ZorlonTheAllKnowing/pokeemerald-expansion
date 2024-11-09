@@ -25,24 +25,28 @@ giveBulbasaur::
 # 17 "data/maps/aStupidCity/scripts.pory"
 	msgbox giveBulbasaur_Text_0
 # 18 "data/maps/aStupidCity/scripts.pory"
-	givemon SPECIES_PECHARUNT, 100, ITEM_POKE_BALL
+	givemon SPECIES_BULBASAUR, 100, ITEM_POKE_BALL
 # 19 "data/maps/aStupidCity/scripts.pory"
-	setflag FLAG_SYS_POKEDEX_GET
+	givemon SPECIES_EEVEE, 100, ITEM_POKE_BALL
 # 20 "data/maps/aStupidCity/scripts.pory"
-	setflag FLAG_ADVENTURE_STARTED
+	givemon SPECIES_PECHARUNT, 100, ITEM_POKE_BALL
 # 21 "data/maps/aStupidCity/scripts.pory"
-	special SetUnlockedPokedexFlags
+	setflag FLAG_SYS_POKEDEX_GET
 # 22 "data/maps/aStupidCity/scripts.pory"
-	setflag FLAG_SYS_NATIONAL_DEX
+	setflag FLAG_ADVENTURE_STARTED
 # 23 "data/maps/aStupidCity/scripts.pory"
-	special EnableNationalPokedex
+	special SetUnlockedPokedexFlags
 # 24 "data/maps/aStupidCity/scripts.pory"
-	setflag FLAG_SYS_POKEMON_GET
+	setflag FLAG_SYS_NATIONAL_DEX
 # 25 "data/maps/aStupidCity/scripts.pory"
+	special EnableNationalPokedex
+# 26 "data/maps/aStupidCity/scripts.pory"
+	setflag FLAG_SYS_POKEMON_GET
+# 27 "data/maps/aStupidCity/scripts.pory"
 	releaseall
 	return
 
 
 giveBulbasaur_Text_0:
 # 17 "data/maps/aStupidCity/scripts.pory"
-	.string "Take a Pecharunt, Leave a Pecharunt$"
+	.string "Take a Bulbsaur, Leave a Bulbasaur$"

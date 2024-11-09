@@ -3046,4 +3046,9 @@ extern const u8 gText_PlantBerry[];
 extern const u8 gText_AM[];
 extern const u8 gText_PM[];
 
+//Added by Zorlon
+//String for Party Menu's Evolve option
+extern const u8 gText_Evolve[];
+
+
 #endif // GUARD_STRINGS_H
