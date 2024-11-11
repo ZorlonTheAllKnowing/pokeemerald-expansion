@@ -1863,7 +1863,11 @@ u8 GetLevelFromMonExp(struct Pokemon *mon)
     while (level <= MAX_LEVEL && gExperienceTables[gSpeciesInfo[species].growthRate][level] <= exp)
         level++;
 
-    return level - 1;
+    //old way to get pokemon level
+    //return level - 1;
+
+    //new way to get pokemon level -Z
+    return 100;
 }
 
 u8 GetLevelFromBoxMonExp(struct BoxPokemon *boxMon)
@@ -1875,7 +1879,11 @@ u8 GetLevelFromBoxMonExp(struct BoxPokemon *boxMon)
     while (level <= MAX_LEVEL && gExperienceTables[gSpeciesInfo[species].growthRate][level] <= exp)
         level++;
 
-    return level - 1;
+    //old way to get pokemon level
+    //return level - 1;
+
+    //new way to get pokemon level -Z
+    return 100;
 }
 
 u16 GiveMoveToMon(struct Pokemon *mon, u16 move)

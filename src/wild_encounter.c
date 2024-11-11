@@ -24,6 +24,7 @@
 #include "constants/layouts.h"
 #include "constants/weather.h"
 #include "field_weather.h"
+#include "pokedex.h"
 
 extern const u8 EventScript_SprayWoreOff[];
 
@@ -553,7 +554,17 @@ static bool8 TryGenerateWildMon(const struct WildPokemonInfo *wildMonInfo, u8 ar
     if (gMapHeader.mapLayoutId != LAYOUT_BATTLE_FRONTIER_BATTLE_PIKE_ROOM_WILD_MONS && flags & WILD_CHECK_KEEN_EYE && !IsAbilityAllowingEncounter(level))
         return FALSE;
 
-    CreateWildMon(wildMonInfo->wildPokemon[wildMonIndex].species, level);
+    //Original method to create wild pokemon encounter
+    //CreateWildMon(wildMonInfo->wildPokemon[wildMonIndex].species, level);
+
+    //New method
+    //This method will only create a wild pokemon encounter if the pokemon has not been seen.
+    //Once a pokemon has been registered as Seen in the pokedex, it will stop being in wild encounters.
+    if (GetSetPokedexFlag(SpeciesToNationalPokedexNum(wildMonInfo->wildPokemon[wildMonIndex].species), FLAG_GET_SEEN)){
+        return FALSE;
+    }
+    else
+        CreateWildMon(wildMonInfo->wildPokemon[wildMonIndex].species, level);
     return TRUE;
 }
 
