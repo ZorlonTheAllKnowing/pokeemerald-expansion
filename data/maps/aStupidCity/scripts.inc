@@ -25,11 +25,11 @@ giveBulbasaur::
 # 17 "data/maps/aStupidCity/scripts.pory"
 	msgbox giveBulbasaur_Text_0
 # 18 "data/maps/aStupidCity/scripts.pory"
-	givemon SPECIES_BULBASAUR, 100, ITEM_POKE_BALL
+	givemon SPECIES_BULBASAUR, 10, ITEM_POKE_BALL
 # 19 "data/maps/aStupidCity/scripts.pory"
-	givemon SPECIES_EEVEE, 100, ITEM_POKE_BALL
+	givemon SPECIES_EEVEE, 10, ITEM_POKE_BALL
 # 20 "data/maps/aStupidCity/scripts.pory"
-	givemon SPECIES_PECHARUNT, 100, ITEM_POKE_BALL
+	givemon SPECIES_PECHARUNT, 10, ITEM_POKE_BALL
 # 21 "data/maps/aStupidCity/scripts.pory"
 	setflag FLAG_SYS_POKEDEX_GET
 # 22 "data/maps/aStupidCity/scripts.pory"
