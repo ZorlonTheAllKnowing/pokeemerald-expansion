@@ -130,4 +130,8 @@
 #define FLDEFF_PAL_TAG_HOF_MONITOR        0x1010
 #define FLDEFF_PAL_TAG_UNKNOWN            0x1011
 
+#define FLDEFF_ZIG                       73
+#define FLDEFFOBJ_ZIG                    40
+#define FLDEFF_PAL_TAG_ZIG               0x1012
+
 #endif // GUARD_FIELD_EFFECT_CONSTANTS_H

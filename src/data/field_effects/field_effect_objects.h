@@ -1336,3 +1336,52 @@ const struct SpriteTemplate gFieldEffectObjectTemplate_Rayquaza = {
 };
 
 static const struct SpritePalette sSpritePalette_Unused = {gObjectEventPal_Npc3, FLDEFF_PAL_TAG_UNKNOWN};
+
+static const struct SpriteFrameImage sPicTable_Zig[] = {
+    overworld_frame(gFieldEffectObjectPic_Zig, 2, 2, 0),
+    overworld_frame(gFieldEffectObjectPic_Zig, 2, 2, 1),
+    overworld_frame(gFieldEffectObjectPic_Zig, 2, 2, 2),
+    overworld_frame(gFieldEffectObjectPic_Zig, 2, 2, 3),
+    overworld_frame(gFieldEffectObjectPic_Zig, 2, 2, 4),
+};
+
+static const union AnimCmd sAnim_Zig[] =
+{
+    ANIMCMD_FRAME(0, 5),
+    ANIMCMD_FRAME(1, 5),
+    ANIMCMD_FRAME(2, 5),
+    ANIMCMD_FRAME(3, 10),
+    ANIMCMD_FRAME(4, 10),
+    ANIMCMD_FRAME(3, 10),
+    ANIMCMD_FRAME(2, 10),
+    ANIMCMD_FRAME(3, 10),
+    ANIMCMD_FRAME(4, 10),
+    ANIMCMD_FRAME(3, 10),
+    ANIMCMD_FRAME(2, 10),
+    ANIMCMD_FRAME(3, 10),
+    ANIMCMD_FRAME(4, 10),
+    ANIMCMD_FRAME(3, 10),
+    ANIMCMD_FRAME(2, 10),
+    ANIMCMD_FRAME(3, 10),
+    ANIMCMD_FRAME(2, 5),
+    ANIMCMD_FRAME(1, 5),
+    ANIMCMD_FRAME(0, 5),
+    ANIMCMD_END,
+};
+
+static const union AnimCmd *const sAnimTable_Zig[] =
+{
+    sAnim_Zig,
+};
+
+const struct SpriteTemplate gFieldEffectObjectTemplate_Zig = {
+    .tileTag = TAG_NONE,
+    .paletteTag = FLDEFF_PAL_TAG_ZIG,
+    .oam = &gObjectEventBaseOam_16x16,
+    .anims = sAnimTable_Zig,
+    .images = sPicTable_Zig,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = WaitFieldEffectSpriteAnim,
+};
+
+const struct SpritePalette gSpritePalette_Zig = {gFieldEffectPal_Zig, FLDEFF_PAL_TAG_ZIG};

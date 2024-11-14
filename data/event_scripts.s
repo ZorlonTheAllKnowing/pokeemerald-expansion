@@ -1076,3 +1076,4 @@ EventScript_VsSeekerChargingDone::
 	.include "data/text/birch_speech.inc"
 
 	.include "data/maps/aStupidCity/scripts.inc"
+	.include "data/scripts/shaking_grass.inc"
