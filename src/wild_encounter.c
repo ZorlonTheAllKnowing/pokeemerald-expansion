@@ -23,10 +23,12 @@
 #include "constants/items.h"
 #include "constants/layouts.h"
 #include "constants/weather.h"
+#include "constants/field_effects.h"
 #include "field_weather.h"
 #include "pokedex.h"
 
 extern const u8 EventScript_SprayWoreOff[];
+extern const u8 SpawnShakingGrass[];
 
 #define MAX_ENCOUNTER_RATE 2880
 
@@ -559,13 +561,208 @@ static bool8 TryGenerateWildMon(const struct WildPokemonInfo *wildMonInfo, u8 ar
 
     //New method
     //This method will only create a wild pokemon encounter if the pokemon has not been seen.
-    //Once a pokemon has been registered as Seen in the pokedex, it will stop being in wild encounters.
+    //Once a pokemon has been registered as Seen in the pokedex, it will stop being in wild encounters. -Zorlon
     if (GetSetPokedexFlag(SpeciesToNationalPokedexNum(wildMonInfo->wildPokemon[wildMonIndex].species), FLAG_GET_SEEN)){
+        gSpecialVar_0x8004 = wildMonInfo->wildPokemon[wildMonIndex].species;  //save species to VAR_0x8004
+        tryTriggerShakingGrassEncounter();
         return FALSE;
     }
     else
         CreateWildMon(wildMonInfo->wildPokemon[wildMonIndex].species, level);
     return TRUE;
+}
+
+void tryTriggerShakingGrassEncounter(){
+    //ScriptContext_SetupScript(SpawnShakingGrass);
+    TryStartHiddenMonFieldEffect();
+}
+
+//Copied from Ghoulslash's dexnav script. -Zorlon
+static bool8 DexNavPickTile(u8 environment, u8 areaX, u8 areaY, bool8 smallScan)
+{
+    // area of map to cover starting from camera position {-7, -7}
+    s16 topX = gSaveBlock1Ptr->pos.x - 3 + (smallScan * 5);
+    s16 topY = gSaveBlock1Ptr->pos.y - 3 + (smallScan * 5);
+    s16 botX = topX + areaX;
+    s16 botY = topY + areaY;
+    u8 i;
+    bool8 nextIter;
+    u8 scale = 0;
+    u8 weight = 0;
+    u8 currMapType = GetCurrentMapType();
+    u8 tileBehaviour;
+    u8 tileBuffer = 2;
+    u8 *xPos = AllocZeroed((botX - topX) * (botY - topY) * sizeof(u8));
+    u8 *yPos = AllocZeroed((botX - topX) * (botY - topY) * sizeof(u8));
+    u32 iter = 0;
+    bool32 ret = FALSE;
+    
+    // loop through every tile in area and evaluate
+    while (topY < botY)
+    {
+        while (topX < botX)
+        {
+            tileBehaviour = MapGridGetMetatileBehaviorAt(topX, topY);
+            //Check for objects
+            // nextIter = FALSE;
+            // if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_BIKE))
+            //     tileBuffer = 4 + 3;
+            // else if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_DASH))
+            //     tileBuffer = 4 + 1;
+            
+            // if (GetPlayerDistance(topX, topY) <= tileBuffer)
+            // {
+            //     // tile too close to player
+            //     topX++;
+            //     continue;
+            // }
+            
+            // for (i = 0; i < OBJECT_EVENTS_COUNT; i++)
+            // {
+            //     if (gObjectEvents[i].currentCoords.x == topX && gObjectEvents[i].currentCoords.y == topY)
+            //     {
+            //         // cannot be on a tile where an object exists
+            //         nextIter = TRUE;
+            //         break;
+            //     }
+            // }
+            
+            // if (nextIter)
+            // {
+            //     topX++;
+            //     continue;
+            // }
+            
+            weight = 0; // initiliaze weight
+            switch (environment)
+            {
+            case ENCOUNTER_TYPE_LAND:
+                if (MetatileBehavior_IsLandWildEncounter(tileBehaviour))
+                {
+                    if (currMapType == MAP_TYPE_UNDERGROUND)
+                    {
+                        // // inside (cave)
+                        // if (IsElevationMismatchAt(gObjectEvents[gPlayerAvatar.spriteId].currentElevation, topX, topY))
+                        //     break; //occurs at same z coord
+                        
+                        scale = 440 - (smallScan * 200) - (GetPlayerDistance(topX, topY) / 2)  - (2 * (topX + topY));
+                        weight = ((Random() % scale) < 1) && !MapGridGetCollisionAt(topX, topY);
+                    }
+                    else
+                    {
+                        // outdoors: grass
+                        scale = 100 - (GetPlayerDistance(topX, topY) * 2);
+                        weight = (Random() % scale <= 5) && !MapGridGetCollisionAt(topX, topY);
+                    }
+                }
+                break;
+            case ENCOUNTER_TYPE_WATER:
+                if (MetatileBehavior_IsSurfableWaterOrUnderwater(tileBehaviour))
+                {
+                    u8 scale = 320 - (smallScan * 200) - (GetPlayerDistance(topX, topY) / 2);
+                    if (IsElevationMismatchAt(gObjectEvents[gPlayerAvatar.spriteId].currentElevation, topX, topY))
+                        break;
+
+                    weight = (Random() % scale <= 1) && !MapGridGetCollisionAt(topX, topY);
+                }
+                break;
+            default:
+                break;
+            }
+            
+            if (weight > 0)
+            {
+                xPos[iter] = topX;
+                yPos[iter] = topY;
+                iter++;
+            }
+            
+            topX++;
+        }
+        
+        topY++;
+        topX = gSaveBlock1Ptr->pos.x - SCANSTART_X + (smallScan * 5);
+    }
+    
+    if (iter > 0)
+    {
+        i = Random() % iter;
+        sDexNavSearchDataPtr->tileX = xPos[i];
+        sDexNavSearchDataPtr->tileY = yPos[i];
+        ret = TRUE;
+    }
+    
+    Free(xPos);
+    Free(yPos);
+
+    return ret;
+}
+
+//Copied from Ghoulslash's dexnav script. -Zorlon
+static bool8 TryStartHiddenMonFieldEffect(u8 environment, u8 xSize, u8 ySize, bool8 smallScan)
+{
+    u8 currMapType = GetCurrentMapType();
+    u8 fldEffId = 0;
+    
+    if (DexNavPickTile(environment, xSize, ySize, smallScan))
+    {
+        u8 metatileBehaviour = MapGridGetMetatileBehaviorAt(sDexNavSearchDataPtr->tileX, sDexNavSearchDataPtr->tileY);
+
+        switch (environment)
+        {
+        case ENCOUNTER_TYPE_LAND:
+            if (currMapType == MAP_TYPE_UNDERGROUND)
+            {
+                fldEffId = FLDEFF_CAVE_DUST;
+            }
+            else if (IsMapTypeIndoors(currMapType))
+            {
+                if (MetatileBehavior_IsTallGrass(metatileBehaviour)) //Grass in cave
+                    fldEffId = FLDEFF_SHAKING_GRASS;
+                else if (MetatileBehavior_IsLongGrass(metatileBehaviour)) //Really tall grass
+                    fldEffId = FLDEFF_SHAKING_LONG_GRASS;
+                else if (MetatileBehavior_IsSandOrDeepSand(metatileBehaviour))
+                    fldEffId = FLDEFF_SAND_HOLE;
+                else
+                    fldEffId = FLDEFF_CAVE_DUST;
+            }
+            else //outdoor, underwater
+            {
+                if (MetatileBehavior_IsTallGrass(metatileBehaviour)) //Regular grass
+                    fldEffId = FLDEFF_SHAKING_GRASS;
+                else if (MetatileBehavior_IsLongGrass(metatileBehaviour)) //Really tall grass
+                    fldEffId = FLDEFF_SHAKING_LONG_GRASS;
+                else if (MetatileBehavior_IsSandOrDeepSand(metatileBehaviour)) //Desert Sand
+                    fldEffId = FLDEFF_SAND_HOLE;
+                else if (MetatileBehavior_IsMountain(metatileBehaviour)) //Rough Terrain
+                    fldEffId = FLDEFF_CAVE_DUST;
+                else
+                    fldEffId = FLDEFF_BERRY_TREE_GROWTH_SPARKLE; //default
+            }
+            break;
+        case ENCOUNTER_TYPE_WATER:
+            fldEffId = FLDEFF_WATER_SURFACING;
+            break;
+        default:
+            return FALSE;
+        }
+        
+        if (fldEffId != 0)
+        {
+            gFieldEffectArguments[0] = sDexNavSearchDataPtr->tileX;
+            gFieldEffectArguments[1] = sDexNavSearchDataPtr->tileY;
+            gFieldEffectArguments[2] = 0xFF; // subpriority
+            gFieldEffectArguments[3] = 2;   //priority
+            sDexNavSearchDataPtr->fldEffSpriteId = FieldEffectStart(fldEffId);
+            if (sDexNavSearchDataPtr->fldEffSpriteId == MAX_SPRITES)
+                return FALSE;
+            
+            sDexNavSearchDataPtr->fldEffId = fldEffId;
+            return TRUE;
+        }
+    }
+
+    return FALSE;
 }
 
 static u16 GenerateFishingWildMon(const struct WildPokemonInfo *wildMonInfo, u8 rod)
